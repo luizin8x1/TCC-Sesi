@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block titulo %}Dias de treino · Treino{% endblock %}
+{% block classe %}tela-form{% endblock %}
+{% block corpo %}
+<main class="cartao">
+  <h1>Olá, {{ user['nome'].split()[0] }}!</h1>
+  <p class="sub">Quantos dias por semana você consegue treinar? A trilha terá um botão para cada dia.</p>
+  <form method="post">
+    <div class="dias-grade" role="radiogroup" aria-label="Dias de treino por semana">
+      {% for n in range(1, 8) %}
+      <label class="dia-opcao">
+        <input type="radio" name="dias" value="{{ n }}" {% if atual == n %}checked{% endif %} required>
+        <span>{{ n }}</span>
+      </label>
+      {% endfor %}
+    </div>
+    <p class="nota">Você pode mudar isso depois. As semanas já feitas continuam salvas.</p>
+    <button class="btn" type="submit">Continuar</button>
+  </form>
+</main>
+{% endblock %}

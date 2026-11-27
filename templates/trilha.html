@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block titulo %}Trilha · Treino{% endblock %}
+{% block classe %}tela-trilha{% endblock %}
+{% macro halter() %}<svg class="ico" viewBox="0 0 30 30" aria-hidden="true"><rect x="2" y="9" width="4" height="12" rx="1.5"/><rect x="7" y="6" width="4" height="18" rx="1.5"/><rect x="11" y="13" width="8" height="4"/><rect x="19" y="6" width="4" height="18" rx="1.5"/><rect x="24" y="9" width="4" height="12" rx="1.5"/></svg>{% endmacro %}
+{% macro check() %}<svg class="ico" viewBox="0 0 30 30" aria-hidden="true"><path d="M7 16 L13 22 L24 9" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg>{% endmacro %}
+{% macro cadeado() %}<svg class="ico" viewBox="0 0 30 30" aria-hidden="true"><rect x="6" y="13" width="18" height="13" rx="3"/><path d="M10 13 V10 a5 5 0 0 1 10 0 V13" fill="none" stroke="#fff" stroke-width="3"/></svg>{% endmacro %}
+{% set deslocamentos = [0, -40, -60, -40, 0, 40, 60] %}
+{% block corpo %}
+<header class="topo">
+  <strong>Treino</strong>
+  <nav>
+    <a href="{{ url_for('dias') }}">{{ user['dias'] }} {{ 'dia' if user['dias'] == 1 else 'dias' }}/semana</a>
+    <form method="post" action="{{ url_for('sair') }}"><button type="submit" class="link">Sair</button></form>
+  </nav>
+</header>
+<main class="trilha-pagina">
+  {% if atual > max_weeks %}
+  <p class="aviso-final">Você concluiu as {{ max_weeks }} semanas. Parabéns, {{ user['nome'].split()[0] }}!</p>
+  {% endif %}
+  {% for s in semanas %}
+  <section class="semana {{ s.status }}" id="semana-{{ s.n }}" style="--c: {{ s.cor.main }}; --d: {{ s.cor.dark }}">
+    <div class="banner">
+      <h2>Semana {{ s.n }}</h2>
+      <p>
+        {% if s.status == 'futura' %}Libera em {{ s.faltam }} {{ 'dia' if s.faltam == 1 else 'dias' }} ({{ s.libera.strftime('%d/%m') }})
+        {% else %}{{ s.feitos }} de {{ s.dias|length }} treinos feitos{% if s.status == 'atual' %} · semana atual{% endif %}{% endif %}
+      </p>
+    </div>
+    <div class="trilha-area">
+      <img class="personagem esq" src="{{ url_for('static', filename='img/p%02d.png' % s.chars[0]) }}" alt="">
+      <img class="personagem dir" src="{{ url_for('static', filename='img/p%02d.png' % s.chars[1]) }}" alt="">
+      <ol class="nos">
+        {% for d in s.dias %}
+        {% set estado = 'bloqueado' if s.status == 'futura' else ('feito' if d.feito else ('perdido' if s.status == 'passada' else 'aberto')) %}
+        <li style="--x: {{ deslocamentos[loop.index0 % 7] }}px">
+          {% if proximo == (s.n, d.dia) %}<span class="comecar">COMEÇAR</span>{% endif %}
+          <button type="button" class="no {{ estado }}" data-semana="{{ s.n }}" data-dia="{{ d.dia }}"
+                  data-estado="{{ estado }}" data-atual="{{ 1 if s.status == 'atual' else 0 }}"
+                  aria-label="Semana {{ s.n }}, treino {{ d.dia }}{{ ' (concluído)' if d.feito }}{{ ' (bloqueado)' if s.status == 'futura' }}"
+                  {% if s.status == 'futura' %}disabled{% endif %}>
+            {% if s.status == 'futura' %}{{ cadeado() }}{% elif d.feito %}{{ check() }}{% else %}{{ halter() }}{% endif %}
+          </button>
+          <span class="rotulo">Dia {{ d.dia }}</span>
+        </li>
+        {% endfor %}
+      </ol>
+    </div>
+  </section>
+  {% endfor %}
+</main>
+
+<dialog id="janela" aria-labelledby="janela-titulo">
+  <div class="janela-topo">
+    <h3 id="janela-titulo"></h3>
+    <button type="button" id="fechar" aria-label="Fechar">×</button>
+  </div>
+  <div id="janela-videos"></div>
+  <p id="janela-msg" class="nota" hidden></p>
+  <div class="janela-rodape">
+    <button type="button" class="btn" id="concluir" hidden>Concluir treino</button>
+  </div>
+</dialog>
+<script nonce="{{ nonce }}">window.SEMANA_ATUAL = {{ atual }};</script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}

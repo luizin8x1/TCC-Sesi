@@ -1,0 +1,16 @@
+COMO COLOCAR OS VIDEOS (.mp4)
+
+Crie uma pasta por semana e uma pasta por treino (dia). Pode ter varios videos em cada treino;
+eles aparecem na ordem do nome do arquivo:
+
+  static/videos/semana-1/dia-1/01-aquecimento.mp4
+  static/videos/semana-1/dia-1/02-supino.mp4
+  static/videos/semana-1/dia-2/01-agachamento.mp4
+  static/videos/semana-2/dia-1/...
+
+Se o treino tiver so um video, tambem vale um arquivo direto:
+
+  static/videos/semana-1/dia-1.mp4
+
+Semanas: 1 a 10. Dias: 1 a 7 (o botao "Dia N" abre os videos da pasta dia-N).
+Dica: use video H.264 (.mp4) em resolucao 720p para carregar rapido no celular.

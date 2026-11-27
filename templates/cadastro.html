@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block titulo %}Criar conta · Treino{% endblock %}
+{% block classe %}tela-form{% endblock %}
+{% block corpo %}
+<main class="cartao">
+  <h1>Criar conta</h1>
+  <p class="sub">Primeiro acesso? Crie sua conta para começar o treino.</p>
+  {% if erro %}<p class="erro" role="alert">{{ erro }}</p>{% endif %}
+  <form method="post" novalidate>
+    <label for="nome">Nome</label>
+    <input id="nome" name="nome" value="{{ nome }}" autocomplete="name" required>
+    <label for="email">E-mail</label>
+    <input id="email" name="email" type="email" value="{{ email }}" autocomplete="email" required>
+    <label for="senha">Senha (mínimo 6 caracteres)</label>
+    <input id="senha" name="senha" type="password" autocomplete="new-password" required>
+    <button class="btn" type="submit">Criar conta</button>
+  </form>
+  {% include "_google.html" %}
+  <p class="troca">Já tenho conta · <a href="{{ url_for('entrar') }}">Entrar</a></p>
+</main>
+{% endblock %}

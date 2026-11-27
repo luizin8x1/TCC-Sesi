@@ -1,0 +1,18 @@
+{% if google_id %}
+<div class="ou"><span>ou</span></div>
+<script src="https://accounts.google.com/gsi/client" async defer nonce="{{ nonce }}"></script>
+<div id="g_id_onload" data-client_id="{{ google_id }}" data-callback="loginGoogle" data-auto_prompt="false"></div>
+<div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="continue_with" data-shape="pill" data-locale="pt-BR"></div>
+<p id="erro-google" class="erro" role="alert" hidden></p>
+<script nonce="{{ nonce }}">
+function loginGoogle(resp) {
+  fetch("{{ url_for('auth_google') }}", {
+    method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({credential: resp.credential})
+  }).then(r => r.json().then(d => ({ok: r.ok, d}))).then(({ok, d}) => {
+    if (ok) { location.href = d.proximo; return; }
+    const e = document.getElementById("erro-google"); e.textContent = d.erro || "Erro no login."; e.hidden = false;
+  });
+}
+</script>
+{% endif %}
